@@ -79,7 +79,7 @@ const SignUpForm = () => {
 
                 navigate("/");
             } else {
-                toast({ title: "Login failed. Please try again." });
+                toast({ title: "Something went wrong. Please try again." });
 
                 return;
             }
