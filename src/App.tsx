@@ -11,7 +11,8 @@ import {
     EditPost,
     PostDetails,
     Profile,
-    UpdateProfile,
+    EditProfile,
+    LikedPosts
 } from "./_root/pages";
 
 import AuthLayout from "./_auth/AuthLayout";
@@ -39,11 +40,10 @@ const App = () => {
                     <Route path="/create-post" element={<CreatePost />} />
                     <Route path="/update-post/:id" element={<EditPost />} />
                     <Route path="/posts/:id" element={<PostDetails />} />
-                    <Route path="/profile/:id" element={<Profile />} />
+                    <Route path="/profile/:id/" element={<Profile />} />
                     <Route
                         path="/update-profile/:id"
-                        element={<UpdateProfile />}
-                    />
+                        element={<EditProfile />}></Route>
                 </Route>
             </Routes>
             <Toaster />

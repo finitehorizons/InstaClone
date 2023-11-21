@@ -28,3 +28,15 @@ export const PostValidation = z.object({
         .max(100, { message: "Must be less than 100 characters" }),
     tags: z.string(),
 });
+
+export const ProfileValidation = z.object({
+    file: z.custom<File[]>(),
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    username: z
+        .string()
+        .min(3, { message: "Username must be at least 3 characters" }),
+    email: z.string().email(),
+    bio: z
+        .string()
+        .max(2200, { message: "Bio must be less than 2200 characters" }),
+});

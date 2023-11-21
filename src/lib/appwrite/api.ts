@@ -1,3 +1,4 @@
+import { IUpdateUser } from "./../../types/index";
 import { ID, Query } from "appwrite";
 import { storage } from "./config";
 
@@ -399,6 +400,62 @@ export async function getUserById(userId: string) {
         if (!user) throw Error;
 
         return user;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function updateUser(user: IUpdateUser) {
+    const hasFileToUpdate = user.file.length > 0;
+    try {
+        let image = {
+            imageUrl: user.imageUrl,
+            imageId: user.imageId,
+        };
+
+        if (hasFileToUpdate) {
+            //Upload new file to appwrite storage
+            const uploadedFile = await uploadFile(user.file[0]);
+            if (!uploadedFile) throw Error;
+
+            //Get new File url
+            const fileUrl = getFilePreview(uploadedFile.$id);
+            if (!fileUrl) {
+                await deleteFile(uploadedFile.$id);
+                throw Error;
+            }
+
+            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+        }
+
+        const updatedUser = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            user.userId,
+            {
+                name: user.name,
+                bio: user.bio,
+                imageUrl: image.imageUrl,
+                imageId: image.imageId,
+            }
+        );
+
+        //Failed to update
+
+        if (!updatedUser) {
+            //Delete new file that has been uploaded
+            if (hasFileToUpdate) {
+                await deleteFile(image.imageId);
+            }
+            throw Error;
+        }
+
+        //Safely delete old file after update
+        if (user.imageId && hasFileToUpdate) {
+            await deleteFile(image.imageId);
+        }
+
+        return updatedUser;
     } catch (error) {
         console.log(error);
     }
